@@ -476,6 +476,28 @@ class RuleFit(BaseEstimator, TransformerMixin):
                     X_concat = np.concatenate((X_concat, X_rules), axis=1)
         return self.lscv.predict(X_concat)
 
+    def predict_proba(self,X):
+        """Predict probability of outcome for X
+
+        """
+        if self.rfmode=='regress':
+            raise ValueError("Probaility prediction only works for classification tasks.")
+        else:
+            X_concat=np.zeros([X.shape[0],0])
+            if 'l' in self.model_type:
+                if self.lin_standardise:
+                    X_concat = np.concatenate((X_concat,self.friedscale.scale(X)), axis=1)
+                else:
+                    X_concat = np.concatenate((X_concat,X), axis=1)
+            if 'r' in self.model_type:
+                rule_coefs=self.coef_[-len(self.rule_ensemble.rules):] 
+                if len(rule_coefs)>0:
+                    X_rules = self.rule_ensemble.transform(X,coefs=rule_coefs)
+                    if X_rules.shape[0] >0:
+                        X_concat = np.concatenate((X_concat, X_rules), axis=1)
+            return self.lscv.predict_proba(X_concat)
+        
+        
     def transform(self, X=None, y=None):
         """Transform dataset.
 
