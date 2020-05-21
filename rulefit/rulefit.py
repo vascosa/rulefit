@@ -386,7 +386,7 @@ class RuleFit(BaseEstimator, TransformerMixin):
                 while np.sum(tree_sizes[0:i])<self.max_rules:
                     i=i+1
                 tree_sizes=tree_sizes[0:i]
-                self.tree_generator.set_params(warm_start=True) 
+                self.tree_generator.set_params(warm_start=False) 
                 curr_est_=0
                 for i_size in np.arange(len(tree_sizes)):
                     size=tree_sizes[i_size]
